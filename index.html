@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Library</title>
+    <link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="library.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Library</h1>
+      <button id="open-modal">Add 📕</button>
+      <!-- This needs to bring up a form to add the books-->
+    </header>
+    <main>
+      <!-- Display book cards -->
+    </main>
+    <div id="modal" class="modal closed">
+      <form action="">
+        <div>
+          <label for="title">Title</label>
+          <input type="text" name="title" id="title" />
+        </div>
+        <div>
+          <label for="author">Author</label>
+          <input type="text" name="author" id="author" />
+        </div>
+        <div>
+          <label for="pages">Pages</label>
+          <input type="number" name="pages" id="pages" />
+        </div>
+        <div>
+          <label for="read">Have you read the book?</label>
+          <input type="checkbox" name="read" id="read" />
+        </div>
+        <div>
+          <button type="submit" id="add-book">Add</button>
+          <button id="close-modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div class="modal-overlay closed" id="modal-overlay"></div>
+  </body>
+</html>
