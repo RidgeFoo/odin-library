@@ -1,17 +1,21 @@
-let myLibrary = [];
+const myLibrary = [];
 
 function Book(title, author, pages, read) {
   this.title = title;
   this.author = author;
   this.pages = pages;
-  this.read = read;
+  this.isRead = read;
   this.info = function () {
-    // Not sure why I need this.read in this instance for this to work properly
     const readMsg = this.read ? "is read" : "not read yet";
-    return `${title} by ${author}, ${pages} pages, ${readMsg}`;
+    return `${this.title} by ${this.author}, ${this.pages} pages, ${readMsg}`;
   };
 }
 
+Book.prototype.toggleRead = function () {
+  this.isRead = !this.isRead;
+};
+
+// Setup some dummy books
 myLibrary.push(
   new Book("Becoming a Supple Leopard", "Kelly Starrett", 283, false),
   new Book("Ego is the Enemy", "Ryan Holiday", 150, true),
@@ -21,39 +25,107 @@ myLibrary.push(
   new Book("Ego is the Enemy", "Ryan Holiday", 150, true)
 );
 
-function addBookToLibrary() {}
-
-function displayBooks() {
-  const main = document.querySelector("main");
-  for (const book of myLibrary) {
-    const bookCard = document.createElement("div");
-    bookCard.classList.add("card");
-
-    const h2Title = document.createElement("h2");
-    h2Title.textContent = book.title;
-    const pAuthor = document.createElement("p");
-    pAuthor.textContent = `✍️ ${book.author}`;
-    const pPages = document.createElement("p");
-    pPages.textContent = `📑 ${book.pages}`;
-
-    bookCard.append(h2Title, pAuthor, pPages);
-    main.append(bookCard);
-  }
+function addBookToLibrary(title, author, pages, isRead) {
+  const book = new Book(title, author, pages, isRead);
+  myLibrary.push(book);
+  displayBooks();
 }
 
-displayBooks();
+/*
+Create book cards
+Clearing out the child nodes because the index will be incorrect if we delete books
+The index position is used to delete the books
+*/
+function displayBooks() {
+  const main = document.querySelector("main");
+  /*
+  Need to do it this way as childNodes is a live collection so you can't just iterate over it. 
+  You need something static which is where the Array.From comes in.
+  If you were to iterate over the childNodes directly it will skip nodes out as you delete them.
+  */
+  Array.from(main.childNodes).forEach((child) => child.remove());
 
-const openModal = document.querySelector("#open-modal");
-const closeModal = document.querySelector("#close-modal");
-const addBook = document.querySelector("#add-book");
+  myLibrary.forEach((book, index) => {
+    let bookCard = getBookCard(book, index);
+    main.append(bookCard);
+  });
+}
+
+function getBookCard(book, indexNumber) {
+  const bookCard = document.createElement("div");
+  bookCard.classList.add("card");
+  bookCard.setAttribute("bookIndex", indexNumber);
+
+  const title = document.createElement("h2");
+  title.textContent = book.title;
+  const author = document.createElement("p");
+  author.textContent = `✍️ ${book.author}`;
+  const pages = document.createElement("p");
+  pages.textContent = `📑 ${book.pages}`;
+
+  const lastRow = document.createElement("div");
+  lastRow.classList.add("isReadDelete");
+
+  lastRow.append(getIsReadButton(book.isRead), getDeleteButton());
+  bookCard.append(title, author, pages, lastRow);
+
+  return bookCard;
+}
+
+function getIsReadButton(isRead) {
+  const button = document.createElement("button");
+  button.className = "isRead";
+  button.textContent = isRead ? `👓 ✅` : `👓 ❌`;
+  button.addEventListener("click", () => {
+    const index = button.parentElement.parentElement.getAttribute("bookIndex");
+    myLibrary[index].toggleRead();
+    displayBooks();
+  });
+  return button;
+}
+
+function getDeleteButton() {
+  const button = document.createElement("button");
+  button.className = "deleteBook";
+  button.textContent = "🗑";
+
+  button.addEventListener("click", () => {
+    const index = button.parentElement.parentElement.getAttribute("bookIndex");
+    myLibrary.splice(index, 1);
+    displayBooks();
+  });
+
+  return button;
+}
+
+// Open and close the book adding modal and overlay accordingly
+const openModal = document.querySelector("#add-book");
+const closeModal = document.querySelector("#cancel");
+const addBook = document.querySelector("#submit");
 const modal = document.querySelector("#modal");
 const modalOverlay = document.querySelector("#modal-overlay");
 
-for(el of [openModal, closeModal, addBook, modalOverlay]) {
-   el.addEventListener("click", displayModal);
+for (let element of [openModal, closeModal, addBook, modalOverlay]) {
+  element.addEventListener("click", displayModal);
 }
 
 function displayModal() {
   modal.classList.toggle("closed");
   modalOverlay.classList.toggle("closed");
 }
+
+// Get form data - not using submit as this causes the page to refresh
+const form = document.getElementById("new-book");
+addBook.addEventListener("click", () => {
+  addBookToLibrary(
+    form.elements.title.value,
+    form.elements.author.value,
+    form.elements.pages.value,
+    form.elements.isRead.checked
+  );
+});
+
+// Display our already created books
+displayBooks();
+
+function removeBookFromLibrary(index) {}
