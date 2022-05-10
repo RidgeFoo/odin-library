@@ -99,13 +99,13 @@ function getDeleteButton() {
 }
 
 // Open and close the book adding modal and overlay accordingly
-const openModal = document.querySelector("#add-book");
-const closeModal = document.querySelector("#cancel");
-const addBook = document.querySelector("#submit");
+const addBook = document.querySelector("#add-book");
+const cancel = document.querySelector("#cancel");
+const submit = document.querySelector("#submit");
 const modal = document.querySelector("#modal");
 const modalOverlay = document.querySelector("#modal-overlay");
 
-for (let element of [openModal, closeModal, addBook, modalOverlay]) {
+for (let element of [addBook, cancel, modalOverlay]) {
   element.addEventListener("click", displayModal);
 }
 
@@ -115,17 +115,30 @@ function displayModal() {
 }
 
 // Get form data - not using submit as this causes the page to refresh
-const form = document.getElementById("new-book");
-addBook.addEventListener("click", () => {
+const form = document.querySelector("#book");
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  // Check if inputs are valid when submitting if not then don't go ahead
+  const inputs = Array.from(form.querySelectorAll("input"));
+
+  // Using an array as you can't break out of forEach
+  for (let el of inputs) {
+    if (!el.checkValidity()) return;
+  }
+
   addBookToLibrary(
     form.elements.title.value,
     form.elements.author.value,
     form.elements.pages.value,
     form.elements.isRead.checked
   );
+
+  // Clear inputs
+  inputs.forEach((el) => (el.value = ""));
+
+  displayModal();
 });
 
 // Display our already created books
 displayBooks();
-
-function removeBookFromLibrary(index) {}
