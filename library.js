@@ -101,7 +101,6 @@ function getDeleteButton() {
 // Open and close the book adding modal and overlay accordingly
 const addBook = document.querySelector("#add-book");
 const cancel = document.querySelector("#cancel");
-const submit = document.querySelector("#submit");
 const modal = document.querySelector("#modal");
 const modalOverlay = document.querySelector("#modal-overlay");
 
@@ -121,7 +120,6 @@ form.addEventListener("submit", (e) => {
 
   // Check if inputs are valid when submitting if not then don't go ahead
   const inputs = Array.from(form.querySelectorAll("input"));
-
   // Using an array as you can't break out of forEach
   for (let el of inputs) {
     if (!el.checkValidity()) return;
