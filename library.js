@@ -1,19 +1,27 @@
 const myLibrary = [];
 
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.isRead = read;
-  this.info = function () {
-    const readMsg = this.read ? "is read" : "not read yet";
-    return `${this.title} by ${this.author}, ${this.pages} pages, ${readMsg}`;
-  };
-}
+class Book {
+  title;
+  author;
+  pages;
+  read;
 
-Book.prototype.toggleRead = function () {
-  this.isRead = !this.isRead;
-};
+  constructor(title, author, pages, read) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+  };
+
+  info() {
+    const readMsg = this.read ? "is read" : "not read yet";
+    return `${this.title} by ${this.author}, ${this.pages}, ${readMsg}`;
+  };
+
+  toggleRead() {
+    this.read = !this.read;
+  }
+}
 
 // Setup some dummy books
 myLibrary.push(
@@ -66,16 +74,16 @@ function getBookCard(book, indexNumber) {
   const lastRow = document.createElement("div");
   lastRow.classList.add("isReadDelete");
 
-  lastRow.append(getIsReadButton(book.isRead), getDeleteButton());
+  lastRow.append(getIsReadButton(book.read), getDeleteButton());
   bookCard.append(title, author, pages, lastRow);
 
   return bookCard;
 }
 
-function getIsReadButton(isRead) {
+function getIsReadButton(read) {
   const button = document.createElement("button");
   button.className = "isRead";
-  button.textContent = isRead ? `👓 ✅` : `👓 ❌`;
+  button.textContent = read ? `👓 ✅` : `👓 ❌`;
   button.addEventListener("click", () => {
     const index = button.parentElement.parentElement.getAttribute("bookIndex");
     myLibrary[index].toggleRead();
